@@ -51,6 +51,10 @@ public class AdminController {
             user.setPassword(encoder.encode(user.getPassword()));
         }
 
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+            user.setRoles(oldUser.getRoles());
+        }
+
         userService.updateUser(user);
         return "redirect:/admin";
     }
