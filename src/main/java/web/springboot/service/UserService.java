@@ -1,12 +1,13 @@
 package web.springboot.service;
 
 
+import org.springframework.security.core.userdetails.UserDetailsService;
 import web.springboot.model.User;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface UserService {
+public interface UserService extends UserDetailsService {
 
     User findById(int id);
 

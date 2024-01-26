@@ -2,8 +2,8 @@ package web.springboot.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import web.springboot.model.User;
@@ -14,13 +14,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder encoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder encoder) {
         this.userRepository = userRepository;
+        this.encoder = encoder;
     }
 
     @Override
@@ -38,6 +40,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     @Transactional
     public void updateUser(User newUser) {
+        User oldUser = userRepository.findById(newUser.getId()).get();
+        if (!oldUser.getPassword().equals(newUser.getPassword())) {
+            newUser.setPassword(encoder.encode(newUser.getPassword()));
+        }
+
+        if (newUser.getRoles() == null || newUser.getRoles().isEmpty()) {
+            newUser.setRoles(oldUser.getRoles());
+        }
+
         userRepository.save(newUser);
     }
 
