@@ -1,7 +1,6 @@
 package web.springboot.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,13 +16,11 @@ public class AdminController {
 
     private final UserService userService;
     private final RoleService roleService;
-    private final PasswordEncoder encoder;
 
     @Autowired
-    public AdminController(UserService userService1, RoleService roleService, PasswordEncoder encoder) {
+    public AdminController(UserService userService1, RoleService roleService) {
         this.userService = userService1;
         this.roleService = roleService;
-        this.encoder = encoder;
     }
 
 
@@ -38,7 +35,6 @@ public class AdminController {
 
     @PostMapping("/new")
     public String createUser(@ModelAttribute("newUser")User user) {
-        user.setPassword(encoder.encode(user.getPassword()));
         userService.saveUser(user);
         return "redirect:/admin";
     }

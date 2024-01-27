@@ -60,8 +60,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void saveUser(User user) {
-        userRepository.save(user);
+    public void saveUser(User newUser) {
+        Optional<User> user = userRepository.findByEmail(newUser.getEmail());
+        if (user.isEmpty()) {
+            newUser.setPassword(encoder.encode(newUser.getPassword()));
+        }
+
+        userRepository.save(newUser);
     }
 
     @Override
